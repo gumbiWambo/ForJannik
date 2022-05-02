@@ -1,0 +1,8 @@
+{
+  "components": [
+    {
+      "selector": "g-cooler-dialog",
+      "scriptName": "dialog"
+    }
+  ]
+}
