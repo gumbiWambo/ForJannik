@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { WebComponentInjectorDirective } from './web-component-injector.directive';
 import { WebComponentsService } from './web-components.service';
 
 @Component({
@@ -7,6 +8,7 @@ import { WebComponentsService } from './web-components.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  @ViewChild(WebComponentInjectorDirective) component!: WebComponentInjectorDirective;
   customSelector = '';
   title = 'app';
   #config!: any[]
@@ -16,6 +18,13 @@ export class AppComponent {
       this.#config = x;
       this.changeComponent();
     });
+  }
+
+  public setNewParameters() {
+    this.component.parameters.next({
+      token: 'ABC',
+      url: 'http://abc.de'
+    })
   }
 
   public changeComponent() {

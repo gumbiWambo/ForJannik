@@ -20,7 +20,6 @@ app.get('/script/:scripName', (req, res) => {
   const scriptName = req.params.scripName
   try {
     if (scriptName && fs.lstatSync('./server/scripts/' + scriptName + '.js').isFile()) {
-      console.log(__dirname);
       res.sendFile(__dirname + '/scripts/' + scriptName + '.js');
     } else {
       res.sendStatus(404).send('Not Found');

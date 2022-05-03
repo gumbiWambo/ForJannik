@@ -1,4 +1,5 @@
 import { Directive, ElementRef, Input, Renderer2 } from '@angular/core';
+import { Subject } from 'rxjs';
 import { WebComponentsService } from './web-components.service';
 
 @Directive({
@@ -10,13 +11,18 @@ export class WebComponentInjectorDirective {
   #componentElement!: any;
   #component = '';
   #scriptSources: string[] = [];
+  public parameters = new Subject();
 
   @Input()
   set component(value: string) {
     this.#component = value;
-    this.injectComponent()
+    if(this.#component) {
+      this.injectComponent()
+    }
   };
-  constructor(private scriptProvider: WebComponentsService, private renderer: Renderer2, private element: ElementRef) { }
+  constructor(private scriptProvider: WebComponentsService, private renderer: Renderer2, private element: ElementRef) {
+    this.parameters.subscribe(x => this.setParameters(x));
+  }
 
   private injectComponent() {
     this.cleanUp();
@@ -31,13 +37,21 @@ export class WebComponentInjectorDirective {
       this.renderer.appendChild(this.element.nativeElement, this.#componentElement);
     });
   }
-
   private cleanUp() {
     if(this.#lastScript) {
       this.#lastScript.remove();
     }
     if(this.#componentElement) {
       this.#componentElement.remove();
+    }
+  }
+  private setParameters(parameters: any) {
+    if (this.#componentElement) {
+      for(const key in parameters) {
+        if (parameters.hasOwnProperty(key)) {
+          this.#componentElement[key] = parameters[key];
+        }
+      }
     }
   }
 }
