@@ -14,7 +14,11 @@ export class WebComponentsService {
 
   constructor(http: HttpClient) {
     this.#http = http;
-    this.getConfig();
+    this.requestConfig();
+  }
+  async getConfig(): Promise<{selector: string, scriptName: string}[]> {
+    await this.#configLoaded;
+    return this.#config
   }
 
   async getScript(selector: string): Promise<string> {
@@ -28,7 +32,7 @@ export class WebComponentsService {
     return '';
   }
 
-  private getConfig() {
+  private requestConfig() {
     this.#configLoaded = firstValueFrom(this.#http.get<{selector: string, scriptName: string}[]>(this.#url + 'components')).then(config => this.#config = config);
   }
 }

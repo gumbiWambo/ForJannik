@@ -4,7 +4,6 @@ const concat = require('concat');
 
 const targetFolder = '../component';
 const sourceFolder = './dist/web-components/';
-const typeScriptFolder = './out-tsc/sdk-messages/types';
 const componentName = 'dialog';
 
 const clearFolder = (folder) => {
