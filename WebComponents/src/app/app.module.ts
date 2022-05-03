@@ -16,8 +16,7 @@ import { registerLocaleData } from '@angular/common';
   imports: [
     BrowserModule
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: []
 })
 export class AppModule {
   constructor(private injector: Injector) {

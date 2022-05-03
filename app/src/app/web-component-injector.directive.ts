@@ -1,4 +1,4 @@
-import { Directive, Input, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, Input, Renderer2 } from '@angular/core';
 import { WebComponentsService } from './web-components.service';
 
 @Directive({
@@ -6,16 +6,24 @@ import { WebComponentsService } from './web-components.service';
 })
 export class WebComponentInjectorDirective {
 
-  #lastScript = ''
+  #lastScript = '';
+  #component = '';
 
   @Input()
-  public component = '';
-  constructor(private scriptProvider: WebComponentsService, private renderer: Renderer2) { }
+  set component(value: string) {
+    this.#component = value;
+    this.injectComponent()
+  };
+  constructor(private scriptProvider: WebComponentsService, private renderer: Renderer2, private element: ElementRef) { }
 
-  ngOnInit() {
-    console.log(this.component);
-  }
   private injectComponent() {
-    this.scriptProvider.getScript(this.component);
+    this.scriptProvider.getScript(this.#component).then(scriptSource => {
+      const script = this.renderer.createElement('script');
+      script.src = scriptSource;
+      this.renderer.appendChild(document.querySelector('body'), script);
+      const dialog = this.renderer.createElement(this.#component);
+      this.renderer.appendChild(this.element.nativeElement, dialog);
+      debugger;
+    });
   }
 }
