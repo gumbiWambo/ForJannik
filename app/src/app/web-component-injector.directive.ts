@@ -9,6 +9,7 @@ export class WebComponentInjectorDirective {
   #lastScript!: any;
   #componentElement!: any;
   #component = '';
+  #scriptSources: string[] = [];
 
   @Input()
   set component(value: string) {
@@ -21,8 +22,11 @@ export class WebComponentInjectorDirective {
     this.cleanUp();
     this.scriptProvider.getScript(this.#component).then(scriptSource => {
       this.#lastScript = this.renderer.createElement('script');
-      this.#lastScript.src = scriptSource;
-      this.renderer.appendChild(document.querySelector('body'), this.#lastScript);
+      if(!this.#scriptSources.includes(scriptSource)) {
+        this.#lastScript.src = scriptSource;
+        this.renderer.appendChild(document.querySelector('body'), this.#lastScript);
+        this.#scriptSources.push(scriptSource);
+      }
       this.#componentElement = this.renderer.createElement(this.#component);
       this.renderer.appendChild(this.element.nativeElement, this.#componentElement);
     });
