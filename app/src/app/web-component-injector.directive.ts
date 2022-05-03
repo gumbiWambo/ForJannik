@@ -1,5 +1,5 @@
 import { Directive, ElementRef, Input, Renderer2 } from '@angular/core';
-import { Subject } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { WebComponentsService } from './web-components.service';
 
 @Directive({
@@ -11,7 +11,7 @@ export class WebComponentInjectorDirective {
   #componentElement!: any;
   #component = '';
   #scriptSources: string[] = [];
-  public parameters = new Subject();
+  private unsubscribe = new Subject<void>();
 
   @Input()
   set component(value: string) {
@@ -21,7 +21,11 @@ export class WebComponentInjectorDirective {
     }
   };
   constructor(private scriptProvider: WebComponentsService, private renderer: Renderer2, private element: ElementRef) {
-    this.parameters.subscribe(x => this.setParameters(x));
+  }
+  
+  ngOnDestroy() {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   private injectComponent() {
@@ -45,13 +49,10 @@ export class WebComponentInjectorDirective {
       this.#componentElement.remove();
     }
   }
-  private setParameters(parameters: any) {
-    if (this.#componentElement) {
-      for(const key in parameters) {
-        if (parameters.hasOwnProperty(key)) {
-          this.#componentElement[key] = parameters[key];
-        }
-      }
+  public setParameters(parameters: {[key: string]: Subject<any>}) {
+    this.unsubscribe.next();
+    for(const key in parameters) {
+      parameters[key].pipe(filter(() => !!this.#componentElement), takeUntil(this.unsubscribe)).subscribe(x => this.#componentElement[key] = x);
     }
   }
 }
