@@ -29,10 +29,12 @@ export class AppComponent implements AfterViewInit {
     this.initParameters();
   }
 
-  public setNewParameters() {
+  public setToken() {
     this.#token += 'X';
-    this.#url += 'Y';
     this.#myToken.next(this.#token);
+  }
+  public setUrl() {
+    this.#url += 'Y';
     this.#myUrl.next(this.#url);
   }
 
