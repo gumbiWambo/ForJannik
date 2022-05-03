@@ -7,11 +7,13 @@ import LocaleEN from '@angular/common/locales/en'
 import { AppComponent } from './app.component';
 import { CoolerDialogComponent } from './cooler-dialog/cooler-dialog.component';
 import { registerLocaleData } from '@angular/common';
+import { DoperDialogComponent } from './doper-dialog/doper-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CoolerDialogComponent
+    CoolerDialogComponent,
+    DoperDialogComponent
   ],
   imports: [
     BrowserModule
@@ -24,6 +26,7 @@ export class AppModule {
   }
   ngDoBootstrap() :void {
     customElements.define('g-cooler-dialog', createCustomElement(CoolerDialogComponent, {injector: this.injector}));
+    customElements.define('g-doper-dialog', createCustomElement(DoperDialogComponent, {injector: this.injector}));
   }
   /**
    * For Angular Localization

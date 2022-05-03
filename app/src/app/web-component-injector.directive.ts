@@ -6,7 +6,8 @@ import { WebComponentsService } from './web-components.service';
 })
 export class WebComponentInjectorDirective {
 
-  #lastScript = '';
+  #lastScript!: any;
+  #componentElement!: any;
   #component = '';
 
   @Input()
@@ -17,13 +18,22 @@ export class WebComponentInjectorDirective {
   constructor(private scriptProvider: WebComponentsService, private renderer: Renderer2, private element: ElementRef) { }
 
   private injectComponent() {
+    this.cleanUp();
     this.scriptProvider.getScript(this.#component).then(scriptSource => {
-      const script = this.renderer.createElement('script');
-      script.src = scriptSource;
-      this.renderer.appendChild(document.querySelector('body'), script);
-      const dialog = this.renderer.createElement(this.#component);
-      this.renderer.appendChild(this.element.nativeElement, dialog);
-      debugger;
+      this.#lastScript = this.renderer.createElement('script');
+      this.#lastScript.src = scriptSource;
+      this.renderer.appendChild(document.querySelector('body'), this.#lastScript);
+      this.#componentElement = this.renderer.createElement(this.#component);
+      this.renderer.appendChild(this.element.nativeElement, this.#componentElement);
     });
+  }
+
+  private cleanUp() {
+    if(this.#lastScript) {
+      this.#lastScript.remove();
+    }
+    if(this.#componentElement) {
+      this.#componentElement.remove();
+    }
   }
 }

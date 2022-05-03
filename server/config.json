@@ -3,6 +3,10 @@
     {
       "selector": "g-cooler-dialog",
       "scriptName": "dialog"
+    },
+    {
+      "selector": "g-doper-dialog",
+      "scriptName": "dialog"
     }
   ]
 }
